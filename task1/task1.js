@@ -1,51 +1,24 @@
 const express = require('express');
 
-const webserver = express(); // создаём веб-сервер
+const webserver = express(); // СЃРѕР·РґР°С‘Рј РІРµР±-СЃРµСЂРІРµСЂ
 
-const port = 8180;
+const port = 3050;
 
-webserver.get('/service1', (req, res) => { 
-    // при обращении по этому УРЛу - просто отдаём строку
-    console.log(`service1 called, req.originalUrl=${req.originalUrl}`);
-    res.send("service1 ok!");
+function getForm() {
+    let form = '<div style="width: 400px; height: 600px; margin: 0 auto; background-color: skyblue;">' +
+        '<h1>Р’Р°Р»РёРґР°С†РёСЏ С„РѕСЂРјС‹</h1>' +
+        '</div>';
+
+    return form;
+}
+
+webserver.get('/', (req, res) => {
+
+
+    res.send(getForm());
 });
 
-webserver.get('/service2', (req, res) => { 
-    // при обращении по этому УРЛу - ответ зависит от GET-параметров
-    console.log(`service2 called, req.originalUrl=${req.originalUrl}, req.query=`,req.query);
-    res.send("service2 ok, par1="+req.query.par1+" par2="+req.query.par2);
-});
-
-webserver.get('/service2b/:par1/:par2', (req, res) => { 
-    // при обращении по этому УРЛу - ответ зависит от частей URI запроса
-    console.log(`service2b called, req.originalUrl=${req.originalUrl}, req.params=`,req.params);
-    res.send("service2b ok, par1="+req.params.par1+" par2="+req.params.par2);
-});
-
-webserver.get('/service2c', (req, res) => { 
-    // при обращении по этому УРЛу - просто отдаём строку
-    console.log(`service1 called, req.originalUrl=${req.originalUrl}`);
-    res.send("service2c ok!");
-});
-
-webserver.get('/service3', (req, res) => { 
-    // при обращении по этому УРЛу - ответ всегда ошибка 401
-    console.log(`service3 called`);
-    res.status(401).end();
-});
-
-webserver.get('/service4', (req, res) => { 
-    // при обращении по этому УРЛу - ответ всегда ошибка 401 и в качестве тела ответа - текст ошибки
-    console.log(`service4 called`);
-    res.status(401).send("sorry, access denied!");
-});
-
-webserver.get('/service5', (req, res) => { 
-    // при обращении по этому УРЛу - ответа просто не будет
-    console.log(`service5 called`);
-});
-
-// просим веб-сервер слушать входящие HTTP-запросы на этом порту
-webserver.listen(port,()=>{ 
+// РїСЂРѕСЃРёРј РІРµР±-СЃРµСЂРІРµСЂ СЃР»СѓС€Р°С‚СЊ РІС…РѕРґСЏС‰РёРµ HTTP-Р·Р°РїСЂРѕСЃС‹ РЅР° СЌС‚РѕРј РїРѕСЂС‚Сѓ
+webserver.listen(port,()=>{
     console.log("web server running on port "+port);
 }); 
