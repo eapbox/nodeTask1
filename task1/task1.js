@@ -2,7 +2,7 @@ const express = require('express');
 
 const webserver = express(); // создаЄм веб-сервер
 
-const port = 3050;
+const port = 8180;
 
 webserver.get('/service1', (req, res) => { 
     // при обращении по этому ”–Ћу - просто отдаЄм строку
