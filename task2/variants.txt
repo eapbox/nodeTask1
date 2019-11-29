@@ -1,0 +1,4 @@
+{
+  "title": "Select your favorite car:",
+  "variants": ["Audi", "Mercedes", "BMW", "Toyota", "Lexus"]
+}
