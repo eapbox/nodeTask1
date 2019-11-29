@@ -5,41 +5,46 @@ const os = require('os');
 
 
 const webserver = express(); // создаём веб-сервер
-
+webserver.use(express.json()); // мидлварь, умеющая обрабатывать тело запроса в формате JSON
 webserver.use(express.urlencoded({extended:true}));
 
 const port = 8181;  //task2
 const variantsFN = path.join(__dirname, 'variants.txt');
 
-
+//Формируем блок с заданием-------------------------------------
 function getVariantsForm() {
-
-
     let variants = '  document.querySelector(\'.workSpace\').innerHTML = \'start\';' +
         'fetch(\'/task2/variants\')' +
         '.then(response => response.json())' +
-        '.then(function(data) { ' +
-        '  let currentTask = \'<h2 style="color: green;">\'+data.title+\'</h2>\';' +
-        '  for (i=0; i<data.variants.length; i++) {' +
-        '    currentTask += \'<button style="display: block; margin: 8px auto; width: 120px; height: 40px;">\'+data.variants[i]+\'</button>\';' +
+        '.then(function(rez) { ' +
+        '  let currentTask = \'<h2 style="color: green;">\'+rez.title+\'</h2>\';' +
+        '  for (i=0; i<rez.variants.length; i++) {' +
+        '    currentTask += \`<button style="display: block; margin: 8px auto; width: 120px; height: 40px;" onclick="sendVote(this, \'${rez.variants[i].name}\')">\`+rez.variants[i].name+\`</button>\`;' +
         '  } ' +
         '  document.querySelector(\'.workSpace\').innerHTML = currentTask;' +
         '}).catch(function(error) {' +
         '  document.querySelector(\'.workSpace\').innerHTML = \'<h2 style="color: red;">Ошибка получения задания...</h2>\';' +
         '})();';
 
-        /*'document.write (\'<table width="100%" border="1">\');\n' +
-        '    for (i=1; i<6; i++) {\n' +
-        '      document.writeln("<tr>");\n' +
-        '      for (j=1; j<6; j++) document.write("<td>" + i + j + "<\\/td>");\n' +
-        '      document.writeln("<\\/tr>");\n' +
-        '    }\n' +
-        '    document.write ("<\\/table> ");';*/
-
-
     return variants;
 }
+//-------------------------------------------------------------------
 
+function funcSendVote() {
+    let funcVote = 'function sendVote(content, selected) {' +
+        'const data = {variant: selected};' +
+        'fetch(\'/task2/vote\', {method: \'POST\',  headers: {' +
+        '                                \'Content-Type\': \'application/json\',' +
+        '                        },body: JSON.stringify(data)})' +
+        '.then(response => response.json())' +
+        '.then(function(data) { ' +
+        '  document.querySelector(\'.resultSpace\').innerHTML = data;' +
+        '}).catch(function(error) {' +
+        '  document.querySelector(\'.resultSpace\').innerHTML = \'<h2 style="color: red; margin-top: 0">Ошибка голосования...</h2>\';' +
+        '})};';
+
+    return funcVote;
+}
 
 //Формируем основную страничку---------------------------------------
 function getForm() {
@@ -49,6 +54,9 @@ function getForm() {
         '  <head>' +
         '    <meta charset="UTF-8">' +
         '    <title>Ershov Task2</title>' +
+        '      <script type="text/javascript" defer>' +
+        `       ${funcSendVote()}` +
+        '      </script>' +
         '  </head>' +
         '  <body>' +
         '    <div class="workSpace" style="width: 500px; height: 300px; margin: 0 auto; background-color: skyblue; text-align: center;">' +
@@ -56,10 +64,23 @@ function getForm() {
         `        ${getVariantsForm()}` +
         '      </script>' +
         '    </div>' +
+        '    <div class="resultSpace" style="width: 500px; height: 80px; margin: 0 auto; background-color: #98c37c; text-align: center;">' +
+        '    </div>' +
         '  </body>' +
         '</html>';
 
     return form;
+}
+//-------------------------------------------------------------------
+
+//Читаем файл--------------------------------------------------------
+
+
+//-------------------------------------------------------------------
+
+//Сохранить в файл голос---------------------------------------------
+function saveVote() {
+
 }
 //-------------------------------------------------------------------
 
@@ -80,12 +101,27 @@ webserver.get('/task2/variants', (req, res) => {
                 !("variants" in JSON.parse(data))
             ) {
                 res.status(401).send("sorry, file is not correct!");
-            } else
+            } else {
                 res.status(200).send(data);
+            }
         }
     });
 });
 //-------------------------------------------------------------------
+
+//принять голос------------------------------------------------------
+webserver.post('/task2/vote', (req, res) => {
+    console.log('выбран: ' + JSON.stringify(req.body));
+    if (
+        !("variant" in req.body)
+    ) {
+        res.status(401).send("sorry, variant is not correct!");
+    } else {
+        saveVote(req.body.variant);
+
+        res.status(200).send({status: "ok"});
+    }
+});
 
 
 // просим веб-сервер слушать входящие HTTP-запросы на этом порту

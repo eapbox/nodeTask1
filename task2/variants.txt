@@ -1,4 +1,4 @@
 {
   "title": "Select your favorite car:",
-  "variants": ["Audi", "Mercedes", "BMW", "Toyota", "Lexus"]
+  "variants": [{"vote": 0, "name": "Audi"}, {"vote": 0, "name": "Mercedes"}, {"vote": 0,   "name": "BMW"}, {"vote": 0, "name": "Toyota"}, {"vote": 0, "name": "Lexus"}]
 }
