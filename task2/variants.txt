@@ -1,4 +1,1 @@
-{
-  "title": "Select your favorite car:",
-  "variants": [{"vote": 0, "name": "Audi"}, {"vote": 0, "name": "Mercedes"}, {"vote": 0,   "name": "BMW"}, {"vote": 0, "name": "Toyota"}, {"vote": 0, "name": "Lexus"}]
-}
+{"title":"Select your favorite car:","variants":[{"id":1,"vote":6,"name":"Audi"},{"id":2,"vote":12,"name":"Mercedes"},{"id":3,"vote":14,"name":"BMW"},{"id":4,"vote":8,"name":"Toyota"},{"id":5,"vote":7,"name":"Lexus"}]}
