@@ -1,0 +1,33 @@
+.workSpace {
+    width: 500px;
+    height: 300px;
+    margin: 0 auto;
+    background-color: skyblue;
+    text-align: center;
+}
+.title {
+    color: green;
+}
+.danger {
+    color: red;
+    margin-top: 0
+}
+.voteBtn {
+    display: block;
+    margin: 8px auto;
+    width: 120px;
+    height: 40px;
+}
+
+.resultSpace {
+    width: 500px;
+    min-height: 80px;
+    margin: 0 auto;
+    background-color: #98c37c;
+    text-align: center;
+}
+.statistic {
+    margin-bottom: 8px;
+    width: 120px;
+    height: 40px;
+}
