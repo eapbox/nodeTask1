@@ -1,9 +1,10 @@
 .workSpace {
-    width: 500px;
-    height: 300px;
+    width: 600px;
     margin: 0 auto;
     background-color: skyblue;
-    text-align: center;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 .title {
     color: green;
@@ -14,20 +15,46 @@
 }
 .voteBtn {
     display: block;
-    margin: 8px auto;
-    width: 120px;
+    margin: 8px;
+    width: 100px;
     height: 40px;
 }
 
 .resultSpace {
-    width: 500px;
+    width: 600px;
     min-height: 80px;
     margin: 0 auto;
     background-color: #98c37c;
-    text-align: center;
 }
 .statistic {
-    margin-bottom: 8px;
+    display: inline-block;
+    /*border: solid 1px red;*/
+    margin: 8px;
+    width: 120px;
+    text-align: center;
+    font-size: 18px;
+    color: dimgrey;
+}
+
+.showSpace {
+    width: 600px;
+    min-height: 60px;
+    margin: 0 auto;
+    background-color: #c4e6f2;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.showBtn {
     width: 120px;
     height: 40px;
+}
+
+.showFormat {
+    width: 560px;
+    min-height: 60px;
+    margin: 0 auto;
+    background-color: transparent;
+    padding: 5px 20px;
+    border: solid 1px green;
 }

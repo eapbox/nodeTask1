@@ -1,4 +1,5 @@
 const express = require('express');
+var crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -70,23 +71,33 @@ function saveVote(id) {
 //------------------------------------------------------------------------
 
 //Получить статистику по голосам------------------------------------------
-function getStat() {
+function getStat(oldETag, clientAccept) {
     return new Promise((resolve, reject) => {
         readTask(true).then(  //читаем с полем голосов
             data => {
-                resolve(JSON.parse(data).variants.map(item => {
-                    return {
-                        name: item.name,
-                        vote: item.vote
-                    }
-                }));
+                let ETag = crypto.createHash('sha256').update(data + clientAccept).digest('base64');  //т.к. мы можем просто запросить статистику только под разные форматы
+                //console.log('oldETag: ', oldETag);
+                //console.log('ETag: ' + ETag);
+                if ( oldETag && (oldETag===ETag) ) {
+                    reject({status: 304, message: "Current data Accept doesn't modified!"});
+                    return;
+                } else {
+                    let result = JSON.parse(data);
+                    result.variants = result.variants.map(item => {
+                        return {
+                            name: item.name,
+                            vote: item.vote
+                        }
+                    });
+                    result.ETag = ETag;
+                    resolve(result);
+                }
             },
             error => reject(error)
         );
     });
 }
 //------------------------------------------------------------------------
-
 
 //Запрос на получение вариантов ответа (без кол-ва голосов)---------------
 webserver.get('/task3/variants', (req, res) => {
@@ -110,10 +121,56 @@ webserver.post('/task3/vote', (req, res) => {
 //------------------------------------------------------------------------
 
 //Запрос на получение статистики------------------------------------------
-webserver.post('/task3/stat', (req, res) => {
-    getStat().then(
-        data => res.status(200).send(data),
-        error => res.status(error.status).send(error.message)
+webserver.get('/task3/stat', (req, res) => {
+    const oldETag = req.header("If-None-Match");
+    const clientAccept = req.headers.accept;
+
+    getStat(oldETag, clientAccept).then(
+        data => {
+            res.setHeader('ETag', data.ETag);
+            res.setHeader('Cache-Control', 'public, max-age=0');
+
+            if (clientAccept === 'application/json') {
+                res.setHeader('Content-Type', 'application/json');
+                res.status(200).send(data.variants);
+            } else
+            if (clientAccept === 'application/xml') {
+                res.setHeader('Content-Type', 'application/xml');
+
+                let xmlData = '<result>\n\n';
+                data.variants.forEach((item, index) => {
+                    xmlData += `  <position>\n`;
+                    xmlData += `    <name>${item.name}</name>\n`;
+                    xmlData += `    <vote>${item.vote}</vote>\n`;
+                    xmlData += `  </position>\n\n`;
+                });
+                xmlData += '</result>';
+                res.status(200).send(xmlData);
+            } else
+            if (clientAccept === 'text/html') {
+                res.setHeader('Content-Type', 'text/html');
+
+                let htmlData = '<table  border="1" width="50%" style="margin: 0 auto;">';
+                htmlData += '<caption>Результат голосования</caption>';
+                htmlData += '<tr>';
+                htmlData += '  <th>Модель</th>';
+                htmlData += '  <th>Голосов</th>';
+                htmlData += '</tr>';
+
+                data.variants.forEach((item, index) => {
+                    htmlData += `  <tr>`;
+                    htmlData += `    <td>${item.name}</td>`;
+                    htmlData += `    <td>${item.vote}</td>`;
+                    htmlData += `  </tr>`;
+                });
+                htmlData += '</table>';
+
+                res.status(200).send(htmlData);
+            }
+        },
+        error => {
+            res.status(error.status).end(error.message);
+        }
     );
 });
 //------------------------------------------------------------------------
