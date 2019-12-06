@@ -8,7 +8,7 @@ const webserver = express();   // создаём веб-сервер
 webserver.use(express.json()); // мидлварь, умеющая обрабатывать тело запроса в формате JSON
 webserver.use(express.urlencoded({extended:true}));
 
-const port = 8181;  //task3
+const port = 8180;  //task3
 const variantsFN = path.join(__dirname, '../task2/variants.txt');
 webserver.use('/task3', express.static(__dirname + '/www'));  //раздача статики
 
