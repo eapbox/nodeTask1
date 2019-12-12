@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Ershov Task4 (form validation)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="task4.js" defer></script>
+</head>
+<body>
+<div class="loginForm">
+    <h2>{{titleForm}}</h2>
+    <form method="post" action="/task4">
+        <p>
+            <label for="usernameLabel" style="display: block; color: {{userColor}}">{{usernameLabel}}</label>
+            <input id="usernameLabel" type="text" placeholder="введите Логин" name="username" value="{{login}}">
+        </p>
+        <p>
+            <label for="passwordLabel" style="display: block; color: {{pswdColor}}">{{passwordLabel}}</label>
+            <input id="passwordLabel" type="password" placeholder="введите Пароль" name="password" value="{{pswd}}">
+        </p>
+        <p>
+            <input type="submit" class="button">
+        </p>
+    </form>
+</div>
+
+</body>
+</html>
